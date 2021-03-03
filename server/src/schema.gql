@@ -1,0 +1,37 @@
+enum BookCategory {
+  NOVELS
+  COMIC
+  COOK
+  ESSAY
+  TRAVEL_GUIDES
+}
+
+type Book {
+  id: ID!
+  title: String!
+  author: Author!
+  categories: [BookCategory!]!
+}
+
+type Author {
+  id: ID!
+  name: String!
+}
+
+union SearchResult = Book | Author
+
+input AddBook {
+  title: String!
+  authorId: ID!
+  categories: [BookCategory!]
+}
+
+type Query {
+  books: [Book!]!
+  authors: [Author!]!
+  search(q: String): [SearchResult!]!
+}
+
+type Mutation {
+  addBook(book: AddBook!): Book!
+}
