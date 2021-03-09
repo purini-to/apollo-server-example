@@ -1,3 +1,7 @@
+scalar DateTime
+
+directive @upper on FIELD_DEFINITION
+
 enum BookCategory {
   NOVELS
   COMIC
@@ -11,6 +15,7 @@ type Book {
   title: String!
   author: Author!
   categories: [BookCategory!]!
+  releaseDate: DateTime!
 }
 
 type Author {
@@ -24,12 +29,14 @@ input AddBook {
   title: String!
   authorId: ID!
   categories: [BookCategory!]
+  releaseDate: DateTime!
 }
 
 type Query {
   books: [Book!]!
   authors: [Author!]!
   search(q: String): [SearchResult!]!
+  hello: String! @upper
 }
 
 type Mutation {

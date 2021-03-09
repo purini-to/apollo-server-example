@@ -3,23 +3,27 @@ import { loadSchemaSync } from "@graphql-tools/load";
 import {
   addResolveFunctionsToSchema,
   ApolloServer,
+  attachDirectiveResolvers,
 } from "apollo-server-express";
 import express from "express";
 import { join } from "path";
+import directives from "./directives";
 import resolvers from "./resolvers";
 
-const schema = loadSchemaSync(join(__dirname, "schema.gql"), {
+let schema = loadSchemaSync(join(__dirname, "schema.gql"), {
   loaders: [new GraphQLFileLoader()],
 });
 
-const schemaWithResolvers = addResolveFunctionsToSchema({
+schema = addResolveFunctionsToSchema({
   schema,
   resolvers: resolvers as any,
 });
 
+attachDirectiveResolvers(schema, directives as any);
+
 const app = express();
 const server = new ApolloServer({
-  schema: schemaWithResolvers,
+  schema,
 });
 
 server.applyMiddleware({ app });

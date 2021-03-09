@@ -1,4 +1,4 @@
-import { GraphQLResolveInfo } from 'graphql';
+import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
@@ -11,7 +11,10 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  DateTime: Date;
 };
+
+
 
 export enum BookCategory {
   Novels = 'NOVELS',
@@ -27,6 +30,7 @@ export type Book = {
   title: Scalars['String'];
   author: Author;
   categories: Array<BookCategory>;
+  releaseDate: Scalars['DateTime'];
 };
 
 export type Author = {
@@ -41,6 +45,7 @@ export type AddBook = {
   title: Scalars['String'];
   authorId: Scalars['ID'];
   categories?: Maybe<Array<BookCategory>>;
+  releaseDate: Scalars['DateTime'];
 };
 
 export type Query = {
@@ -48,6 +53,7 @@ export type Query = {
   books: Array<Book>;
   authors: Array<Author>;
   search: Array<SearchResult>;
+  hello: Scalars['String'];
 };
 
 
@@ -143,6 +149,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
+  DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
   BookCategory: BookCategory;
   Book: ResolverTypeWrapper<Book>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
@@ -157,6 +164,7 @@ export type ResolversTypes = {
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
+  DateTime: Scalars['DateTime'];
   Book: Book;
   ID: Scalars['ID'];
   String: Scalars['String'];
@@ -168,11 +176,20 @@ export type ResolversParentTypes = {
   Boolean: Scalars['Boolean'];
 };
 
+export type UpperDirectiveArgs = {  };
+
+export type UpperDirectiveResolver<Result, Parent, ContextType = any, Args = UpperDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
+
+export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
+  name: 'DateTime';
+}
+
 export type BookResolvers<ContextType = any, ParentType extends ResolversParentTypes['Book'] = ResolversParentTypes['Book']> = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   author?: Resolver<ResolversTypes['Author'], ParentType, ContextType>;
   categories?: Resolver<Array<ResolversTypes['BookCategory']>, ParentType, ContextType>;
+  releaseDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -190,6 +207,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   books?: Resolver<Array<ResolversTypes['Book']>, ParentType, ContextType>;
   authors?: Resolver<Array<ResolversTypes['Author']>, ParentType, ContextType>;
   search?: Resolver<Array<ResolversTypes['SearchResult']>, ParentType, ContextType, RequireFields<QuerySearchArgs, never>>;
+  hello?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
@@ -197,6 +215,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
 };
 
 export type Resolvers<ContextType = any> = {
+  DateTime?: GraphQLScalarType;
   Book?: BookResolvers<ContextType>;
   Author?: AuthorResolvers<ContextType>;
   SearchResult?: SearchResultResolvers<ContextType>;
@@ -210,3 +229,13 @@ export type Resolvers<ContextType = any> = {
  * Use "Resolvers" root object instead. If you wish to get "IResolvers", add "typesPrefix: I" to your config.
  */
 export type IResolvers<ContextType = any> = Resolvers<ContextType>;
+export type DirectiveResolvers<ContextType = any> = {
+  upper?: UpperDirectiveResolver<any, any, ContextType>;
+};
+
+
+/**
+ * @deprecated
+ * Use "DirectiveResolvers" root object instead. If you wish to get "IDirectiveResolvers", add "typesPrefix: I" to your config.
+ */
+export type IDirectiveResolvers<ContextType = any> = DirectiveResolvers<ContextType>;

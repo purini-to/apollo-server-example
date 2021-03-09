@@ -6,3 +6,6 @@ generates:
       - "typescript"
       - "typescript-resolvers"
       - "typescript-operations"
+    config:
+      scalars:
+        DateTime: Date
